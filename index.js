@@ -77,7 +77,7 @@ async function startup() {
     // ================= DEBUG ===================
     // ===========================================
 
-    srv_browser.getPosts([
+    let arrObj = [
         {
             id: 'KopiKenangan',
             IgLink: 'https://www.instagram.com/kopikenangan.id/',
@@ -86,7 +86,16 @@ async function startup() {
             id: 'StarBucks',
             IgLink: 'https://www.instagram.com/starbucksindonesia/',
         },
-    ]);
+        {
+            id: 'BurgerKing',
+            IgLink: 'https://www.instagram.com/burgerking.id/',
+        },
+    ]
+
+    arrObj = await srv_browser.getPostsAll(arrObj);
+
+    await srv_browser.scrapPostDetailAll(arrObj);
+
 
     // srv_browser.scrapPost([
     //     'https://www.instagram.com/p/DZ6lay5OxjW/',

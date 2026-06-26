@@ -23,16 +23,8 @@ class SrvGlobalSetup {
         let dir = path.join(__dirname, '..',);
         this.main_dir = dir;
 
-        const json_raw = await new Promise(resolve => {
-            fs.readFile(path.join(dir, `config`, 'global.json'), 'utf8', (err, val) => {
-                resolve(val);
-            });
-        })
 
-        const json_parsed = JSON.parse(json_raw);
 
-        this.token = json_parsed.token;
-        this.arr_symbols = json_parsed.arr_symbols;
     }
 
 

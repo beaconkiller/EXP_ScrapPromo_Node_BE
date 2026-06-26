@@ -73,9 +73,9 @@ async function startup() {
     //     process.exit(1);
     // }
 
-    // ===========================================
-    // ================= DEBUG ===================
-    // ===========================================
+    // ============================================
+    // ================= TESTER ===================
+    // ============================================
 
     let arrObj = [
         {
@@ -93,30 +93,7 @@ async function startup() {
     ]
 
     arrObj = await srv_browser.getPostsAll(arrObj);
-
     await srv_browser.scrapPostDetailAll(arrObj);
-
-
-    // srv_browser.scrapPost([
-    //     'https://www.instagram.com/p/DZ6lay5OxjW/',
-    // ]);
-
-    // srv_worker_getter_micro.start_loop_broker_sum();
-
-    // srv_worker_getter_running_trade.start_loop_get_running_trade();
-
-    // await srv_worker_getter.get_bearer_token();
-
-    // await srv_worker_getter.run_all();
-    // await srv_worker_getter.get_all_historical_data();
-    // await srv_worker_getter.get_all_broker_summary_data();
-
-    // srv_helper.get_date_iso_string();
-    // srv_browser.get_browser();
-
-    // srv_worker_getter.get_all_historical_data();
-    // await srv_email.init();
-    // await srv_browser.get_session();
 }
 
 

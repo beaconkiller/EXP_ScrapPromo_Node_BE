@@ -150,4 +150,4 @@ file_storage/file_export/*
 file_storage/screenshots/*
 !file_storage/screenshots/.gitkeep
 
-file_storage/chromeProfile/*
+file_storage/*

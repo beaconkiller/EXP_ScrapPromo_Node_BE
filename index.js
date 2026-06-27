@@ -1,6 +1,7 @@
 const ser_web_server = require('./services/ser_web_server');
 const srv_browser = require("./services/srv_browser");
 const srv_global_setup = require("./services/srv_global_setup");
+const SrvDataPost = require('./services/SrvDataPost');
 
 
 async function startup() {
@@ -82,18 +83,25 @@ async function startup() {
             id: 'KopiKenangan',
             IgLink: 'https://www.instagram.com/kopikenangan.id/',
         },
-        {
-            id: 'StarBucks',
-            IgLink: 'https://www.instagram.com/starbucksindonesia/',
-        },
+        // {
+        //     id: 'StarBucks',
+        //     IgLink: 'https://www.instagram.com/starbucksindonesia/',
+        // },
         {
             id: 'BurgerKing',
             IgLink: 'https://www.instagram.com/burgerking.id/',
         },
+        {
+            id: 'Indomaret',
+            IgLink: 'https://www.instagram.com/indomaret/',
+        },
     ]
 
-    arrObj = await srv_browser.getPostsAll(arrObj);
+    await srv_browser.getPostsAll(arrObj);
     await srv_browser.scrapPostDetailAll(arrObj);
+    SrvDataPost.exportScrapData(arrObj);
+    console.log(JSON.stringify(arrObj, null, 2));
+    // console.log('arrObj');
 }
 
 

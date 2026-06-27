@@ -22,9 +22,6 @@ class SrvGlobalSetup {
 
         let dir = path.join(__dirname, '..',);
         this.main_dir = dir;
-
-
-
     }
 
 

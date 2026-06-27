@@ -55,42 +55,9 @@ class SrvBrowser {
             await Promise.all(arrFuncs);
             // console.log(JSON.stringify(arrIgAccts, null, 2));
             await browser.close();
-            return arrIgAccts;
         } catch (error) {
             console.log('err')
         }
-    }
-
-
-
-    async scrapPostDetailAll(arrObj) {
-        console.log('========================================')
-        console.log('============ STARTING CHROME ===========')
-        console.log('========================================')
-
-        puppeteer.use(StealthPlugin());
-
-        const browser = await puppeteer.launch({
-            executablePath: this.get_browser(),
-            headless: false,
-            userDataDir: './file_storage/chromeProfile',
-            args: [
-                '--disable-notifications',
-                '--password-store=basic',
-                '--disable-features=PasswordCheck',
-                '--no-sandbox',
-            ],
-
-            ignoreDefaultArgs: [
-                '--enable-automation'
-            ]
-        });
-
-        let arrFunc = [];
-        for (let acct of arrObj) {
-            console.log(acct);
-            acct.postLinks = await this.scrapPostDetail(browser, acct.postLinks);
-        };
     }
 
 
@@ -167,9 +134,8 @@ class SrvBrowser {
             return links
         } catch (error) {
             console.warn(error.message)
-        }
-
-    }
+        };
+    };
 
 
 
@@ -183,75 +149,167 @@ class SrvBrowser {
 
         puppeteer.use(StealthPlugin());
 
-        const page = await browser.newPage();
-        await page.setRequestInterception(true);
+        let tmpArrPosts = JSON.parse(JSON.stringify(arrPosts));
+
+        // ---------------------------------------
+        // ----------- SUPER IMPORTANT -----------
+        // ---------------------------------------
+
+        let batchSize = 2;
+
+        // ---------------------------------------
+
+        for (let i = 0; i < tmpArrPosts.length;) {
+            let arrFuncs = [];
+            for (let b = 0; b < batchSize; b++) {
+                if (!tmpArrPosts[i]) continue;
+                arrFuncs.push((async () => {
+                    let post = tmpArrPosts[i];
+
+                    const page = await browser.newPage();
+                    await page.setRequestInterception(true);
 
 
 
+                    // ====================================================
+                    // =================== DISABLE CSS ====================
+                    // ====================================================
 
-        // ====================================================
-        // =================== DISABLE CSS ====================
-        // ====================================================
+                    page.on('request', (req) => {
+                        const resourceType = req.resourceType();
+                        if (
+                            resourceType === 'stylesheet' ||
+                            resourceType === 'image' ||
+                            resourceType === 'font'
+                        ) {
+                            req.abort();
+                        } else {
+                            req.continue();
+                        }
+                    });
 
-        page.on('request', (req) => {
-            const resourceType = req.resourceType();
-            if (
-                resourceType === 'stylesheet' ||
-                resourceType === 'image'
-                // resourceType === 'font'
-            ) {
-                req.abort();
-            } else {
-                req.continue();
+
+                    // console.log(post);
+                    // console.log('-------- post --------');
+                    const url = post.postHref
+
+                    await page.goto(
+                        url,
+                        // { waitUntil: 'networkidle0' },
+                        // { waitUntil: 'domcontentloaded' }, // <---- this sucks, sometimes captions turned to >messages<, undetectable.
+                        { waitUntil: 'networkidle2' },
+                    );
+
+                    // ----------------------------------------------------
+                    // -------------- SEARCH FOR PROMO WORDS --------------
+                    // ----------------------------------------------------
+
+                    const searchPromoWords = await page.$$eval('div', (divs) => {
+                        const arr = [];
+
+                        for (const d of divs) {
+                            if (d.children.length !== 2) continue;
+
+                            if (
+                                d.children[0].tagName !== 'DIV' ||
+                                d.children[1].tagName !== 'SPAN'
+                            ) {
+                                continue;
+                            }
+
+                            const span = d.children[1];
+                            const text = span.textContent.toUpperCase();
+
+                            const isPromo =
+                                text.includes('SALE') ||
+                                text.includes('HEMAT') ||
+                                text.includes('PROMO') ||
+                                text.includes('SPECIAL') ||
+                                text.includes('SPESIAL') ||
+                                text.includes('SPECIAL OFFER') ||
+                                text.includes('REWARD') ||
+                                text.includes('HARGA KHUSUS') ||
+                                text.includes('GRATIS') ||
+                                text.includes('CASHBACK') ||
+                                text.includes('BUY 1 GET 1');
+
+                            arr.push({
+                                outerHtml: d.outerHTML,
+                                spanOuterHtml: span.outerHTML,
+                                isPromo,
+                            });
+                        }
+
+                        return arr;
+                    });
+
+                    // ----------------------------------------------------
+                    // ----------------- SEARCH FOR DATES -----------------
+                    // ----------------------------------------------------
+
+                    const searchPostDate = await page.$$eval('time', (times) => {
+                        const arr = [];
+
+                        for (const time of times) {
+                            arr.push({
+                                postDate: time.dateTime,
+                            });
+                        }
+
+                        return arr;
+                    });
+
+
+                    post.postDate = searchPostDate[0].postDate;
+                    post.isInterest = searchPromoWords.length > 0 ? searchPromoWords[0].isPromo : false
+                    post.spanOuterHtml = searchPromoWords.length > 0 ? searchPromoWords[0].spanOuterHtml : false
+                    post.postAcct = post.postHref.split('/')[3]
+                    await page.close();
+                })())
+                i++
             }
+            await Promise.all(arrFuncs);
+        };
+        return tmpArrPosts
+    };
+
+
+
+    async scrapPostDetailAll(arrObj) {
+        console.log('========================================')
+        console.log('============ STARTING CHROME ===========')
+        console.log('========================================')
+
+        puppeteer.use(StealthPlugin());
+
+        const browser = await puppeteer.launch({
+            executablePath: this.get_browser(),
+            headless: false,
+            userDataDir: './file_storage/chromeProfile',
+            args: [
+                '--disable-notifications',
+                '--password-store=basic',
+                '--disable-features=PasswordCheck',
+                '--no-sandbox',
+            ],
+
+            ignoreDefaultArgs: [
+                '--enable-automation'
+            ]
         });
 
+        let arrFunc = [];
+        for (let acct of arrObj) {
+            arrFunc.push((async () => {
+                acct.postLinks = await this.scrapPostDetail(browser, acct.postLinks);
+            })())
+        };
 
-        for (var post of arrPosts) {
-            console.log(post);
-            console.log('-------- post --------');
-            const url = post.postHref
+        console.log('---------- PROMSIE ALL ----------')
 
-            await page.goto(
-                url,
-                { waitUntil: 'networkidle0' }
-            );
+        await Promise.all(arrFunc);
 
-            const strP = await page.$$eval('span', (span) => {
-                const result = [];
-                for (const s of span) {
-                    if (s.children.length != 1) continue;
-
-                    const isPromo =
-                        s.outerHTML.toUpperCase().includes('SALE') ||
-                        s.outerHTML.toUpperCase().includes('HEMAT') ||
-                        s.outerHTML.toUpperCase().includes('PROMO') ||
-                        s.outerHTML.toUpperCase().includes('SPECIAL') ||
-                        s.outerHTML.toUpperCase().includes('SPESIAL') ||
-                        s.outerHTML.toUpperCase().includes('SPECIAL OFFER') ||
-                        s.outerHTML.toUpperCase().includes('REWARD') ||
-                        s.outerHTML.toUpperCase().includes('HARGA KHUSUS') ||
-                        s.outerHTML.toUpperCase().includes('GRATIS') ||
-                        s.outerHTML.toUpperCase().includes('CASHBACK') ||
-                        s.outerHTML.toUpperCase().includes('BUY 1 GET 1');
-
-                    if (!isPromo) continue;
-
-                    result.push({
-                        outerHTML: s.outerHTML,
-                        childCount: s.children.length,
-                        isPromo: isPromo,
-                    });
-                }
-                return result;
-            });
-            for (var item of strP) {
-                item.url = url
-            }
-            post.postDetail = strP.length > 0 ? strP[0].isPromo : false
-        }
-
-        console.log(arrPosts);
+        browser.close();
     }
 
 

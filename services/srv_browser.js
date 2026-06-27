@@ -4,8 +4,19 @@ const path = require('path');
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const srv_global_setup = require('./srv_global_setup');
 const { platform } = require('os');
+const SrvDataPost = require('./SrvDataPost');
 
 class SrvBrowser {
+
+
+
+    async scrapByObj(arrObj) {
+        await this.getPostsAll(arrObj);
+        await this.scrapPostDetailAll(arrObj);
+        await SrvDataPost.exportScrapData(arrObj);
+        console.log(JSON.stringify(arrObj, null, 2));
+    }
+
 
 
     async getPostsAll(arrIgAccts) {

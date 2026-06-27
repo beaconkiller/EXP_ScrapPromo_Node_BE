@@ -48,17 +48,17 @@ async function startup() {
     // -------------- WEB-SERVER --------------
     // ----------------------------------------
 
-    try {
-        console.log('============================================');
-        console.log('========== INITIALIZING WEB SERVER =========');
-        console.log('============================================');
-        console.log(' ');
+    // try {
+    //     console.log('============================================');
+    //     console.log('========== INITIALIZING WEB SERVER =========');
+    //     console.log('============================================');
+    //     console.log(' ');
 
-        await ser_web_server.initialize();
-    } catch (err) {
-        console.error(`${err}`);
-        process.exit(1); // Non-zero failure code
-    }
+    //     await ser_web_server.initialize();
+    // } catch (err) {
+    //     console.error(`${err}`);
+    //     process.exit(1); // Non-zero failure code
+    // }
 
 
 
@@ -75,7 +75,7 @@ async function startup() {
     // }
 
     // ============================================
-    // ================= TESTER ===================
+    // =============== MAIN FUNC ==================
     // ============================================
 
     let arrObj = [
@@ -83,10 +83,6 @@ async function startup() {
             id: 'KopiKenangan',
             IgLink: 'https://www.instagram.com/kopikenangan.id/',
         },
-        // {
-        //     id: 'StarBucks',
-        //     IgLink: 'https://www.instagram.com/starbucksindonesia/',
-        // },
         {
             id: 'BurgerKing',
             IgLink: 'https://www.instagram.com/burgerking.id/',
@@ -95,14 +91,16 @@ async function startup() {
             id: 'Indomaret',
             IgLink: 'https://www.instagram.com/indomaret/',
         },
+        {
+            id: 'mcd',
+            IgLink: 'https://www.instagram.com/mcdonaldsid/',
+        },
     ]
 
-    await srv_browser.getPostsAll(arrObj);
-    await srv_browser.scrapPostDetailAll(arrObj);
-    SrvDataPost.exportScrapData(arrObj);
-    console.log(JSON.stringify(arrObj, null, 2));
+    await srv_browser.scrapByObj(arrObj)
     // console.log('arrObj');
 }
+
 
 
 

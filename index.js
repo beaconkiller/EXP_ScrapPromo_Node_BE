@@ -111,6 +111,14 @@ async function startup() {
             id: 'chatime',
             IgLink: 'https://www.instagram.com/chatimeindo/',
         },
+        {
+            id: 'haus',
+            IgLink: 'https://www.instagram.com/haus.indonesia/',
+        },
+        {
+            id: 'lawson',
+            IgLink: 'https://www.instagram.com/lawson_indonesia/',
+        },
     ]
 
     await srv_browser.scrapByObj(arrObj)

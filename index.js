@@ -80,20 +80,36 @@ async function startup() {
 
     let arrObj = [
         {
-            id: 'KopiKenangan',
+            id: 'kopiKenangan',
             IgLink: 'https://www.instagram.com/kopikenangan.id/',
         },
         {
-            id: 'BurgerKing',
+            id: 'burgerKing',
             IgLink: 'https://www.instagram.com/burgerking.id/',
         },
         {
-            id: 'Indomaret',
+            id: 'indomaret',
             IgLink: 'https://www.instagram.com/indomaret/',
         },
         {
             id: 'mcd',
             IgLink: 'https://www.instagram.com/mcdonaldsid/',
+        },
+        {
+            id: 'alfamidi',
+            IgLink: 'https://www.instagram.com/alfamidi_ku/',
+        },
+        {
+            id: 'dCrepes',
+            IgLink: 'https://www.instagram.com/d_crepes/',
+        },
+        {
+            id: 'tomSushi',
+            IgLink: 'https://www.instagram.com/tomsushiidn/',
+        },
+        {
+            id: 'chatime',
+            IgLink: 'https://www.instagram.com/chatimeindo/',
         },
     ]
 

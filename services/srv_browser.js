@@ -113,15 +113,19 @@ class SrvBrowser {
             );
 
 
+            // ------------------------------------------------------------------
+            // ---------- THIS WOULD ONLY WORK IF WE'RE LOGGED IN TO IG ---------
+            // ------------------------------------------------------------------
 
-            const responsePromise = this.listen_request(page);
+            // const responsePromise = this.listen_request(page);
 
-            await page.evaluate(() => {
-                window.scrollTo(0, document.body.scrollHeight);
-            });
+            // await page.evaluate(() => {
+            //     window.scrollTo(0, document.body.scrollHeight);
+            // });
 
+            // let response = await responsePromise
 
-            let response = await responsePromise
+            // ------------------------------------------------------------------
 
             const links = await page.$$eval('a', (anchors) => {
                 const result = [];
@@ -162,13 +166,18 @@ class SrvBrowser {
 
         let tmpArrPosts = JSON.parse(JSON.stringify(arrPosts));
 
-        // ---------------------------------------
-        // ----------- SUPER IMPORTANT -----------
-        // ---------------------------------------
+        // ---------------------------------------------------------------
+        // ----------------------- SUPER IMPORTANT -----------------------
+        // ---------------------------------------------------------------
+        // -- The batch size is directly involved with our CPU and RAM, --
+        // -- and network bandwith. Simultaneously opening a lot of     --
+        // -- tabs would spike our resource usage. Best just to limit   --
+        // -- this to minimum.                                          --
+        // ---------------------------------------------------------------
 
-        let batchSize = 2;
+        let batchSize = 1;
 
-        // ---------------------------------------
+        // ---------------------------------------------------------------
 
         for (let i = 0; i < tmpArrPosts.length;) {
             let arrFuncs = [];

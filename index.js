@@ -122,10 +122,6 @@ async function startup() {
             IgLink: 'https://www.instagram.com/lawson_indonesia/',
         },
         {
-<<<<<<< Updated upstream
-            id: 'jusantara',
-            IgLink: 'https://www.instagram.com/jusantara.id/',
-=======
             id: 'excelso',
             IgLink: 'https://www.instagram.com/excelsocoffee/',
         },
@@ -136,7 +132,6 @@ async function startup() {
         {
             id: 'krispykremeid',
             IgLink: 'https://www.instagram.com/krispykremeid/',
->>>>>>> Stashed changes
         },
     ]
 

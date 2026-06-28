@@ -78,6 +78,8 @@ async function startup() {
     // =============== MAIN FUNC ==================
     // ============================================
 
+    // await srv_browser.initiateLogin();
+
     let arrObj = [
         {
             id: 'kopiKenangan',
@@ -120,13 +122,25 @@ async function startup() {
             IgLink: 'https://www.instagram.com/lawson_indonesia/',
         },
         {
+<<<<<<< Updated upstream
             id: 'jusantara',
             IgLink: 'https://www.instagram.com/jusantara.id/',
+=======
+            id: 'excelso',
+            IgLink: 'https://www.instagram.com/excelsocoffee/',
+        },
+        {
+            id: 'wingstop',
+            IgLink: 'https://www.instagram.com/wingstopid/',
+        },
+        {
+            id: 'krispykremeid',
+            IgLink: 'https://www.instagram.com/krispykremeid/',
+>>>>>>> Stashed changes
         },
     ]
 
     await srv_browser.scrapByObj(arrObj)
-    // console.log('arrObj');
 }
 
 

@@ -388,7 +388,53 @@ class SrvBrowser {
         let str_os = process.platform;
         let browser_dir = srv_global_setup.map_browser_dir[str_os]
         return browser_dir;
+    };
+
+
+
+    async initiateLogin() {
+
+        try {
+            console.log('========================================')
+            console.log('============ STARTING CHROME ===========')
+            console.log('========================================')
+
+            puppeteer.use(StealthPlugin());
+
+            const browser = await puppeteer.launch({
+                executablePath: this.get_browser(),
+                headless: false,
+                userDataDir: './file_storage/chromeProfile',
+                args: [
+                    '--disable-notifications',
+                    '--password-store=basic',
+                    '--disable-features=PasswordCheck',
+                    '--no-sandbox',
+                ],
+
+                ignoreDefaultArgs: [
+                    '--enable-automation'
+                ]
+            });
+
+
+            let pageMain = await browser.newPage();
+            await this.letOneLiveEnd(browser);
+
+
+            await pageMain.goto(
+                'https://www.instagram.com/',
+                { waitUntil: 'networkidle0' }
+            );
+
+            // await Promise.all(arrFuncs);
+            // console.log(JSON.stringify(arrIgAccts, null, 2));
+            // await browser.close();
+        } catch (error) {
+            console.log('err')
+        }
     }
+
 
 }
 

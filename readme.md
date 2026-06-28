@@ -53,6 +53,7 @@ This is just a side project but i have some things in mind for future updates.
 - Rework the concurrent page fetch for better resource efficiency.
 - Probably save the post image with compressing and ignoring the same image as postLink as it's fileName.
 - Adding fetchDate in final array.
+- Probably cleaning the caption for easier read.
 
 
  

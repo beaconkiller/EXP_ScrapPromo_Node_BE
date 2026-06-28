@@ -17,20 +17,17 @@ Make sure you have these before proceeding :
 1. Chromium.
 2. Windows (for now).
 
-We need windows because logging in needs a gui (hopefully i could solve this in the future).
+We need windows because logging in needs a gui (hopefully i could solve this in the future). This was ran mainly with PM2, but could be run with plain node like this code below 
+
+```terminal
+node index.js
+```
+
 
 for starter, make sure to fill the array object like this :
 
 ```js
     let arrObj = [
-        {
-            id: 'KopiKenangan',
-            IgLink: 'https://www.instagram.com/kopikenangan.id/',
-        },
-        {
-            id: 'StarBucks',
-            IgLink: 'https://www.instagram.com/starbucksindonesia/',
-        },
         {
             id: 'BurgerKing',
             IgLink: 'https://www.instagram.com/burgerking.id/',
@@ -46,13 +43,16 @@ and put into our srv_browser.getPostsAll() to get the initial posts of those acc
 
 # Known issues
 1. Sometimes it's stuck on a page when fetching detailed post and it made the whole script stuck.
+2. There would be an error from puppeteer-stealth that gave us Target Protocol Error when we're done fetching detailed post and closing the page, but its not affecting anything other than our log (which should be handled in the future if we're saving the logs.)
 
 
 # Coming soon
 This is just a side project but i have some things in mind for future updates.
-1. Auto ignored fetched post (probably going to save it to a .csv or just a plain .json.)
-2. Map what "interesting" words thats contained in fetched post.
-
+- Auto ignored fetched post (probably going to save it to a .csv or just a plain .json.)
+- Map what "interesting" words thats contained in fetched post (probably in an array).
+- Rework the concurrent page fetch for better resource efficiency.
+- Probably save the post image with compressing and ignoring the same image as postLink as it's fileName.
+- Adding fetchDate in final array.
 
 
  

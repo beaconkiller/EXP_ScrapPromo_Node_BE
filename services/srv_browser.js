@@ -12,9 +12,14 @@ class SrvBrowser {
 
     async scrapByObj(arrObj) {
         await this.getPostsAll(arrObj);
-        await this.scrapPostDetailAll(arrObj);
-        await SrvDataPost.exportScrapData(arrObj);
-        console.log(JSON.stringify(arrObj, null, 2));
+
+        let arrPosts = SrvDataPost.mergeAllPosts(arrObj);
+        let arrPostsResult = await this.scrapPostDetailBatchAll(arrPosts)
+        srv_helper.export_csv(arrPostsResult,)
+
+
+        // await SrvDataPost.exportScrapData(arrObj);
+        // console.log(JSON.stringify(arrObj, null, 2));
     }
 
 
@@ -154,6 +159,166 @@ class SrvBrowser {
 
 
 
+    async scrapPostDetailBatchAll(arrPosts) {
+
+        console.log('========================================')
+        console.log('======== scrapPostDetailBatchAll =======')
+        console.log('========================================')
+
+        puppeteer.use(StealthPlugin());
+
+        const browser = await puppeteer.launch({
+            executablePath: this.get_browser(),
+            headless: false,
+            userDataDir: './file_storage/chromeProfile',
+            args: [
+                '--disable-notifications',
+                '--password-store=basic',
+                '--disable-features=PasswordCheck',
+                '--no-sandbox',
+            ],
+            ignoreDefaultArgs: [
+                '--enable-automation'
+            ]
+        });
+
+
+        let pageMain = await browser.newPage();
+        await this.letOneLiveEnd(browser);
+
+        let tmpArrPosts = arrPosts;
+        console.log('tmpArrPosts');
+        console.log(tmpArrPosts);
+        console.log('tmpArrPosts');
+
+        // ---------------------------------------------------------------
+        // ----------------------- SUPER IMPORTANT -----------------------
+        // ---------------------------------------------------------------
+        // -- The batch size is directly involved with our CPU and RAM, --
+        // -- and network bandwith. Simultaneously opening a lot of     --
+        // -- tabs would spike our resource usage. Best just to limit   --
+        // -- this to minimum.                                          --
+        // ---------------------------------------------------------------
+
+        let batchSize = 4;
+
+        // ---------------------------------------------------------------
+
+        for (let i = 0; i < tmpArrPosts.length;) {
+            let arrFuncs = [];
+            for (let b = 0; b < batchSize; b++) {
+                if (!tmpArrPosts[i]) continue;
+                arrFuncs.push((async () => {
+                    let post = tmpArrPosts[i];
+
+                    const page = await browser.newPage();
+                    await page.setRequestInterception(true);
+
+
+
+                    // ====================================================
+                    // =================== DISABLE CSS ====================
+                    // ====================================================
+
+                    page.on('request', (req) => {
+                        const resourceType = req.resourceType();
+                        if (
+                            resourceType === 'stylesheet' ||
+                            resourceType === 'image' ||
+                            resourceType === 'font'
+                        ) {
+                            req.abort();
+                        } else {
+                            req.continue();
+                        }
+                    });
+
+                    const url = post.postHref
+
+                    await page.goto(
+                        url,
+                        // { waitUntil: 'networkidle0' },
+                        // { waitUntil: 'domcontentloaded' }, // <---- this sucks, sometimes captions turned to >messages<, undetectable.
+                        { waitUntil: 'networkidle2' },
+                    );
+
+
+
+                    // ----------------------------------------------------
+                    // -------------- SEARCH FOR PROMO WORDS --------------
+                    // ----------------------------------------------------
+
+                    const searchPromoWords = await page.$$eval('div', (divs) => {
+                        const arr = [];
+
+                        for (const d of divs) {
+                            if (d.children.length !== 2) continue;
+
+                            if (
+                                d.children[0].tagName !== 'DIV' ||
+                                d.children[1].tagName !== 'SPAN'
+                            ) {
+                                continue;
+                            }
+
+                            const span = d.children[1];
+                            const text = span.textContent.toUpperCase();
+
+                            const isPromo =
+                                text.includes('SALE') ||
+                                text.includes('HEMAT') ||
+                                text.includes('PROMO') ||
+                                text.includes('SPECIAL') ||
+                                text.includes('SPESIAL') ||
+                                text.includes('SPECIAL OFFER') ||
+                                text.includes('REWARD') ||
+                                text.includes('HARGA KHUSUS') ||
+                                text.includes('GRATIS') ||
+                                text.includes('CASHBACK') ||
+                                text.includes('BUY 1 GET 1');
+
+                            arr.push({
+                                outerHtml: d.outerHTML,
+                                spanOuterHtml: span.outerHTML,
+                                isPromo,
+                            });
+                        }
+
+                        return arr;
+                    });
+
+
+
+                    // ----------------------------------------------------
+                    // ----------------- SEARCH FOR DATES -----------------
+                    // ----------------------------------------------------
+
+                    const searchPostDate = await page.$$eval('time', (times) => {
+                        let obj = {
+                            postDate: null
+                        }
+                        if (times.length == 0) return obj;
+                        obj.postDate = times[0].dateTime
+                        return obj;
+                    });
+
+
+                    post.postDate = searchPostDate.postDate ?? null;
+                    post.isInterest = searchPromoWords.length > 0 ? searchPromoWords[0].isPromo : false
+                    post.spanOuterHtml = searchPromoWords.length > 0 ? searchPromoWords[0].spanOuterHtml : false
+                    post.postAcct = post.postHref.split('/')[3]
+                    await page.close();
+                })())
+                i++
+            }
+            await Promise.all(arrFuncs);
+        };
+        await browser.close();
+        return tmpArrPosts
+    };
+
+
+
     async scrapPostDetail(browser, arrPosts) {
 
         console.log('========================================')
@@ -175,7 +340,7 @@ class SrvBrowser {
         // -- this to minimum.                                          --
         // ---------------------------------------------------------------
 
-        let batchSize = 1;
+        let batchSize = 4;
 
         // ---------------------------------------------------------------
 
@@ -268,19 +433,19 @@ class SrvBrowser {
                     // ----------------------------------------------------
 
                     const searchPostDate = await page.$$eval('time', (times) => {
-                        const arr = [];
-
-                        for (const time of times) {
-                            arr.push({
-                                postDate: time.dateTime,
-                            });
+                        let obj = {
+                            postDate: null
                         }
+                        if (times.length == 0) return obj;
 
-                        return arr;
+
+                        obj.postDate = times[0].dateTime
+
+                        return obj;
                     });
 
 
-                    post.postDate = searchPostDate[0].postDate;
+                    post.postDate = searchPostDate.postDate ?? null;
                     post.isInterest = searchPromoWords.length > 0 ? searchPromoWords[0].isPromo : false
                     post.spanOuterHtml = searchPromoWords.length > 0 ? searchPromoWords[0].spanOuterHtml : false
                     post.postAcct = post.postHref.split('/')[3]
@@ -320,14 +485,59 @@ class SrvBrowser {
 
         let arrFunc = [];
         for (let acct of arrObj) {
-            arrFunc.push((async () => {
-                acct.postLinks = await this.scrapPostDetail(browser, acct.postLinks);
-            })())
+            // arrFunc.push((async () => {
+            //     acct.postLinks = await this.scrapPostDetail(browser, acct.postLinks);
+            // })())
+            acct.postLinks = await this.scrapPostDetail(browser, acct.postLinks);
         };
 
-        console.log('---------- PROMSIE ALL ----------')
+        // console.log('---------- PROMSIE ALL ----------')
 
-        await Promise.all(arrFunc);
+        // await Promise.all(arrFunc);
+
+        await this.letOneLiveEnd();
+
+        browser.close();
+    }
+
+
+
+    async scrapPostDetailAllV2(arrObj) {
+        console.log('========================================')
+        console.log('============ STARTING CHROME ===========')
+        console.log('========================================')
+
+        puppeteer.use(StealthPlugin());
+
+        const browser = await puppeteer.launch({
+            executablePath: this.get_browser(),
+            headless: false,
+            userDataDir: './file_storage/chromeProfile',
+            args: [
+                '--disable-notifications',
+                '--password-store=basic',
+                '--disable-features=PasswordCheck',
+                '--no-sandbox',
+            ],
+
+            ignoreDefaultArgs: [
+                '--enable-automation'
+            ]
+        });
+
+        let arrFunc = [];
+        for (let acct of arrObj) {
+            // arrFunc.push((async () => {
+            //     acct.postLinks = await this.scrapPostDetail(browser, acct.postLinks);
+            // })())
+            acct.postLinks = await this.scrapPostDetail(browser, acct.postLinks);
+        };
+
+        // console.log('---------- PROMSIE ALL ----------')
+
+        // await Promise.all(arrFunc);
+
+        await this.letOneLiveEnd();
 
         browser.close();
     }

@@ -57,4 +57,4 @@ This is just a side project but i have some things in mind for future updates.
 
 
  
-<em>**Hungry man eat a spaghetti. But a wise man write one.**</em> 
+<em>**Hungry man eats a spaghetti. But a wise man writes one. I'm a wise man.**</em> 

@@ -27,6 +27,21 @@ class SrvDataPost {
         }
     }
 
+
+
+    mergeAllPosts(arrObj){
+        let TmpArrObj = JSON.parse(JSON.stringify(arrObj));
+
+        let arr = []
+        for(let obj of TmpArrObj){
+            for(let post of obj.postLinks){
+                post.accountName = obj.id;
+                arr.push(post);
+            }
+        };
+        return arr;
+    }
+
 }
 
 module.exports = new SrvDataPost()

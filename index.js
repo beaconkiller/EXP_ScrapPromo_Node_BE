@@ -135,7 +135,7 @@ async function startup() {
         },
     ]
 
-    await srv_browser.scrapByObj(arrObj)
+    await srv_browser.scrapByObj(arrObj);
 }
 
 

@@ -8,7 +8,8 @@ It's currently fully operational on Windows because we need to log in to ig firs
 The sequence of this script :
 1. Run a post scrap for each account in the object.
 2. Run a more detailed post scrap for each post from earlier scrap.
-3. Export to a csv.
+3. Mark posts that have interesting words.
+4. Export to a csv.
 
 
 ## Quickstart
@@ -35,11 +36,13 @@ for starter, make sure to fill the array object like this :
     ]
 ```
 
-and put into our srv_browser.getPostsAll() to get the initial posts of those accounts. Then proceed to reuse the same variable that has been processed, with this :
+and put into our srv_browser.scrapByObj(arrObj); to get the initial posts of those accounts. 
 
 ```js
-    await srv_browser.scrapPostDetailAll(arrObj);
+await srv_browser.scrapByObj(arrObj);
 ```
+
+This is a shortcut function to scrap, and export all of the data into a .csv file.
 
 # Known issues
 1. Sometimes it's stuck on a page when fetching detailed post and it made the whole script stuck.

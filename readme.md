@@ -45,8 +45,10 @@ await srv_browser.scrapByObj(arrObj);
 This is a shortcut function to scrap, and export all of the data into a .csv file.
 
 # Known issues
-1. Sometimes it's stuck on a page when fetching detailed post and it made the whole script stuck.
-2. There would be an error from puppeteer-stealth that gave us Target Protocol Error when we're done fetching detailed post and closing the page, but its not affecting anything other than our log (which should be handled in the future if we're saving the logs.)
+- Sometimes it's stuck on a page when fetching detailed post and it made the whole script stuck.
+- There would be an error from puppeteer-stealth that gave us Target Protocol Error when we're done fetching detailed post and closing the page, but its not affecting anything other than our log (which should be handled in the future if we're saving the logs.).
+- Pages are sometimes not opened because of bot detection on browsers (which could be solved by injecting a proper cookies from an actual login process.).
+
 
 
 # Coming soon

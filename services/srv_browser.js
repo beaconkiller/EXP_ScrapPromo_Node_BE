@@ -18,10 +18,8 @@ class SrvBrowser {
 
         let arrPostsResult = await this.scrapPostDetailBatchAll(arrPosts);
         arrPostsResult = await SrvDataPost.getInterestWords(arrPostsResult);
-        srv_helper.export_csv(arrPostsResult, 'scrap');
 
-        // await SrvDataPost.exportScrapData(arrObj);
-        // console.log(JSON.stringify(arrObj, null, 2));
+        srv_helper.export_csv(arrPostsResult, 'scrap');
     }
 
 

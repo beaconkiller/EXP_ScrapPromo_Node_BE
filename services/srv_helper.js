@@ -1,5 +1,7 @@
 const { json2csv } = require("json-2-csv");
 const fs = require('fs');
+const csv = require('csv-parser');
+const streamPromise = require('stream/promises');
 
 class SrvHelper {
     async delay(time) {
@@ -23,6 +25,41 @@ class SrvHelper {
             console.error(error);
         }
     }
+
+
+
+    async readDirAsync(dirPath) {
+        let files = await new Promise(resolve => {
+            fs.readdir(dirPath, (err, result) => {
+                if (err) resolve([]);
+                resolve(result);
+            })
+        });
+        return files;
+    }
+
+
+
+    async readCsv(filePath) {
+        try {
+            let results = [];
+            return await new Promise(resolve => {
+                fs.createReadStream(filePath)
+                    .pipe(csv())
+                    .on('data', (row) => {
+                        results.push(row);
+                    })
+                    .on('end', () => {
+                        resolve(results);
+                        // console.log(results);
+                    });
+            })
+        } catch (error) {
+            console.error(error);
+            return results = [];
+        }
+    }
+
 
 
 

@@ -14,8 +14,12 @@ class SrvBrowser {
         await this.getPostsAll(arrObj);
 
         let arrPosts = SrvDataPost.mergeAllPosts(arrObj);
-        let arrPostsResult = await this.scrapPostDetailBatchAll(arrPosts)
-        srv_helper.export_csv(arrPostsResult,)
+        // arrPosts = SrvDataPost.removeFetchedPosts(arrPosts); // <---- Eliminate already fetched posts
+
+        let arrPostsResult = await this.scrapPostDetailBatchAll(arrPosts);
+        arrPostsResult = await SrvDataPost.getInterestWords(arrPostsResult);
+        srv_helper.export_csv(arrPostsResult, 'scrap');
+
 
 
         // await SrvDataPost.exportScrapData(arrObj);
@@ -248,44 +252,34 @@ class SrvBrowser {
                     // -------------- SEARCH FOR PROMO WORDS --------------
                     // ----------------------------------------------------
 
-                    const searchPromoWords = await page.$$eval('div', (divs) => {
-                        const arr = [];
+                    const arrWords = srv_global_setup.getWords();
+                    const searchPromoWords = await page.$$eval(
+                        'div',
+                        (divs, arrWords) => {
+                            const arr = [];
+                            for (const d of divs) {
+                                if (d.children.length !== 2) continue;
 
-                        for (const d of divs) {
-                            if (d.children.length !== 2) continue;
+                                if (
+                                    d.children[0].tagName !== 'DIV' ||
+                                    d.children[1].tagName !== 'SPAN'
+                                ) {
+                                    continue;
+                                }
 
-                            if (
-                                d.children[0].tagName !== 'DIV' ||
-                                d.children[1].tagName !== 'SPAN'
-                            ) {
-                                continue;
-                            }
+                                const span = d.children[1];
+                                const text = span.textContent.toUpperCase();
+                                const isPromo = arrWords.some(word => text.includes(word));
 
-                            const span = d.children[1];
-                            const text = span.textContent.toUpperCase();
-
-                            const isPromo =
-                                text.includes('SALE') ||
-                                text.includes('HEMAT') ||
-                                text.includes('PROMO') ||
-                                text.includes('SPECIAL') ||
-                                text.includes('SPESIAL') ||
-                                text.includes('SPECIAL OFFER') ||
-                                text.includes('REWARD') ||
-                                text.includes('HARGA KHUSUS') ||
-                                text.includes('GRATIS') ||
-                                text.includes('CASHBACK') ||
-                                text.includes('BUY 1 GET 1');
-
-                            arr.push({
-                                outerHtml: d.outerHTML,
-                                spanOuterHtml: span.outerHTML,
-                                isPromo,
-                            });
-                        }
-
-                        return arr;
-                    });
+                                arr.push({
+                                    outerHtml: d.outerHTML,
+                                    spanOuterHtml: span.outerHTML,
+                                    isPromo,
+                                });
+                            };
+                            return arr;
+                        },
+                        arrWords);
 
 
 
@@ -301,7 +295,6 @@ class SrvBrowser {
                         obj.postDate = times[0].dateTime
                         return obj;
                     });
-
 
                     post.postDate = searchPostDate.postDate ?? null;
                     post.isInterest = searchPromoWords.length > 0 ? searchPromoWords[0].isPromo : false

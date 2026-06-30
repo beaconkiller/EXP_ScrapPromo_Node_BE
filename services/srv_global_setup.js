@@ -73,6 +73,26 @@ class SrvGlobalSetup {
         );
     }
 
+
+
+    getWords() {
+        let arrWords = [
+            'SALE',
+            'HEMAT',
+            'PROMO',
+            'SPECIAL',
+            'SPESIAL',
+            'SPECIAL OFFER',
+            'REWARD',
+            'HARGA KHUSUS',
+            'GRATIS',
+            'CASHBACK',
+            'PROMOTION',
+            'BUY 1 GET 1',
+        ];
+        return arrWords;
+    }
+
 }
 
 

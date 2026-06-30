@@ -1,6 +1,7 @@
 const ser_web_server = require('./services/ser_web_server');
 const srv_browser = require("./services/srv_browser");
 const srv_global_setup = require("./services/srv_global_setup");
+const srv_helper = require('./services/srv_helper');
 const SrvDataPost = require('./services/SrvDataPost');
 
 
@@ -81,61 +82,70 @@ async function startup() {
     // await srv_browser.initiateLogin();
 
     let arrObj = [
-        {
-            id: 'kopiKenangan',
-            IgLink: 'https://www.instagram.com/kopikenangan.id/',
-        },
-        {
-            id: 'burgerKing',
-            IgLink: 'https://www.instagram.com/burgerking.id/',
-        },
-        {
-            id: 'indomaret',
-            IgLink: 'https://www.instagram.com/indomaret/',
-        },
-        {
-            id: 'mcd',
-            IgLink: 'https://www.instagram.com/mcdonaldsid/',
-        },
-        {
-            id: 'alfamidi',
-            IgLink: 'https://www.instagram.com/alfamidi_ku/',
-        },
-        {
-            id: 'dCrepes',
-            IgLink: 'https://www.instagram.com/d_crepes/',
-        },
-        {
-            id: 'tomSushi',
-            IgLink: 'https://www.instagram.com/tomsushiidn/',
-        },
-        {
-            id: 'chatime',
-            IgLink: 'https://www.instagram.com/chatimeindo/',
-        },
-        {
-            id: 'haus',
-            IgLink: 'https://www.instagram.com/haus.indonesia/',
-        },
-        {
-            id: 'lawson',
-            IgLink: 'https://www.instagram.com/lawson_indonesia/',
-        },
-        {
-            id: 'excelso',
-            IgLink: 'https://www.instagram.com/excelsocoffee/',
-        },
-        {
-            id: 'wingstop',
-            IgLink: 'https://www.instagram.com/wingstopid/',
-        },
+        // {
+        //     id: 'kopiKenangan',
+        //     IgLink: 'https://www.instagram.com/kopikenangan.id/',
+        // },
+        // {
+        //     id: 'burgerKing',
+        //     IgLink: 'https://www.instagram.com/burgerking.id/',
+        // },
+        // {
+        //     id: 'indomaret',
+        //     IgLink: 'https://www.instagram.com/indomaret/',
+        // },
+        // {
+        //     id: 'mcd',
+        //     IgLink: 'https://www.instagram.com/mcdonaldsid/',
+        // },
+        // {
+        //     id: 'alfamidi',
+        //     IgLink: 'https://www.instagram.com/alfamidi_ku/',
+        // },
+        // {
+        //     id: 'dCrepes',
+        //     IgLink: 'https://www.instagram.com/d_crepes/',
+        // },
+        // {
+        //     id: 'tomSushi',
+        //     IgLink: 'https://www.instagram.com/tomsushiidn/',
+        // },
+        // {
+        //     id: 'chatime',
+        //     IgLink: 'https://www.instagram.com/chatimeindo/',
+        // },
+        // {
+        //     id: 'haus',
+        //     IgLink: 'https://www.instagram.com/haus.indonesia/',
+        // },
+        // {
+        //     id: 'lawson',
+        //     IgLink: 'https://www.instagram.com/lawson_indonesia/',
+        // },
+        // {
+        //     id: 'excelso',
+        //     IgLink: 'https://www.instagram.com/excelsocoffee/',
+        // },
+        // {
+        //     id: 'wingstop',
+        //     IgLink: 'https://www.instagram.com/wingstopid/',
+        // },
         {
             id: 'krispykremeid',
             IgLink: 'https://www.instagram.com/krispykremeid/',
         },
+        {
+            id: 'jcoindonesia',
+            IgLink: 'https://www.instagram.com/jcoindonesia/',
+        },
     ]
 
     await srv_browser.scrapByObj(arrObj);
+
+    let latestData = await SrvDataPost.getLatestScrapData();
+    // console.log(latestData);
+    // latestData = SrvDataPost.getInterestWords(latestData);
+    
 }
 
 

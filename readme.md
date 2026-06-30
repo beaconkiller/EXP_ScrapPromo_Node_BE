@@ -5,11 +5,11 @@ Made this to scrap whatever promo those guys had through their instagram (in the
 It's currently fully operational on Windows because we need to log in to ig first using the real ig UI. But turns out the pages are still accessible even if we're not logged in. The limitation is the number of posts we could scrap. Havent tried on Ubuntu though, that would be the next step.
 
 ## Squence
-The sequence of this script :
-1. Run a post scrap for each account in the object.
-2. Run a more detailed post scrap for each post from earlier scrap.
-3. Mark posts that have interesting words.
-4. Export to a csv.
+The sequence of this script, respectively :
+- Run a post scrap for each account in the object.
+- Run a more detailed post scrap for each post from earlier scrap.
+- Mark posts that have interesting words.
+- Export to a csv.
 
 
 ## Quickstart
@@ -52,7 +52,7 @@ This is a shortcut function to scrap, and export all of the data into a .csv fil
 # Coming soon
 This is just a side project but i have some things in mind for future updates.
 - Auto ignored fetched post (probably going to save it to a .csv or just a plain .json.)
-- Map what "interesting" words thats contained in fetched post (probably in an array).
+- ~~Map what "interesting" words thats contained in fetched post (probably in an array).~~
 - Rework the concurrent page fetch for better resource efficiency.
 - Probably save the post image with compressing and ignoring the same image as postLink as it's fileName.
 - Adding fetchDate in final array.

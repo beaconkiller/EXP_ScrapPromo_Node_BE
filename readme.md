@@ -51,9 +51,9 @@ This is a shortcut function to scrap, and export all of the data into a .csv fil
 
 # Coming soon
 This is just a side project but i have some things in mind for future updates.
-- Auto ignored fetched post (probably going to save it to a .csv or just a plain .json.)
+- ~~Auto ignored fetched post (probably going to save it to a .csv or just a plain .json.).~~
 - ~~Map what "interesting" words thats contained in fetched post (probably in an array).~~
-- Rework the concurrent page fetch for better resource efficiency.
+- ~~Rework the concurrent page fetch for better resource efficiency.~~
 - Probably save the post image with compressing and ignoring the same image as postLink as it's fileName.
 - Adding fetchDate in final array.
 - Probably cleaning the caption for easier read.
